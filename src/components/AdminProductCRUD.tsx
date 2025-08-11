@@ -32,8 +32,17 @@ const AdminProductCRUD: React.FC = () => {
             if (error) {
                 setError(error.message);
             } else {
-                const url = supabase.storage.from('product-images').getPublicUrl(filePath).data.publicUrl;
-                uploadedUrls.push(url);
+                // Get a signed URL valid for 1 year
+                const { data: signedData, error: signedError } = await supabase
+                    .storage
+                    .from('product-images')
+                    .createSignedUrl(filePath, 31536000);
+                if (signedError) {
+                    setError(signedError.message);
+                } else {
+                    const signedUrl = signedData.signedUrl;
+                    uploadedUrls.push(signedUrl);
+                }
             }
         }
         setForm(prev => ({ ...prev, images: [...prev.images, ...uploadedUrls] }));
