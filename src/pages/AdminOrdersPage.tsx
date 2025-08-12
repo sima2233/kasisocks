@@ -30,9 +30,22 @@ const AdminOrdersPage: React.FC = () => {
                     query = query.lte('created_at', dateTo);
                 }
                 const { data, error } = await query;
-                console.log('Supabase orders query:', { error, data, user });
                 if (error) setError(error.message);
-                else setOrders(data);
+                else {
+                    // Fetch user emails for each order
+                    const userIds = Array.from(new Set(data.map((order: any) => order.user_id)));
+                    const { data: usersData, error: usersError } = await supabase
+                        .from('profiles')
+                        .select('id,email')
+                        .in('id', userIds);
+                    if (usersError) {
+                        setOrders(data.map((order: any) => ({ ...order, user_email: order.user_id })));
+                    } else {
+                        const idToEmail: Record<string, string> = {};
+                        usersData.forEach((u: any) => { idToEmail[u.id] = u.email; });
+                        setOrders(data.map((order: any) => ({ ...order, user_email: idToEmail[order.user_id] || order.user_id })));
+                    }
+                }
             } catch (err) {
                 setError((err as Error).message);
             } finally {
@@ -102,7 +115,7 @@ const AdminOrdersPage: React.FC = () => {
                             <tr key={order.id} className="border-b hover:bg-gray-50">
                                 <td className="py-2 px-3 font-mono">{order.id}</td>
                                 <td className="py-2 px-3">{new Date(order.created_at).toLocaleString()}</td>
-                                <td className="py-2 px-3">{order.user_id}</td>
+                                <td className="py-2 px-3">{order.user_email}</td>
                                 <td className="py-2 px-3">{order.delivery_method}</td>
                                 <td className="py-2 px-3">{order.location}</td>
                                 <td className="py-2 px-3">{order.phone}</td>
