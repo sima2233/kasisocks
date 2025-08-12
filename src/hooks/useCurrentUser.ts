@@ -7,6 +7,7 @@ export function useCurrentUser() {
         async function fetchUserWithProfile() {
             const { data } = await supabase.auth.getUser();
             const authUser = data?.user;
+            console.log('useCurrentUser initial:', { authUser });
             if (authUser) {
                 // Fetch profile from profiles table
                 const { data: profile } = await supabase
@@ -14,6 +15,7 @@ export function useCurrentUser() {
                     .select('role')
                     .eq('id', authUser.id)
                     .single();
+                console.log('useCurrentUser profile:', { profile });
                 setUser({ ...authUser, role: profile?.role || 'user' });
             } else {
                 setUser(null);
@@ -21,6 +23,7 @@ export function useCurrentUser() {
         }
         fetchUserWithProfile();
         const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log('useCurrentUser onAuthStateChange:', { session });
             if (session?.user) {
                 supabase
                     .from('profiles')
@@ -28,6 +31,7 @@ export function useCurrentUser() {
                     .eq('id', session.user.id)
                     .single()
                     .then(({ data: profile }) => {
+                        console.log('useCurrentUser profile (onAuthStateChange):', { profile });
                         setUser({ ...session.user, role: profile?.role || 'user' });
                     });
             } else {

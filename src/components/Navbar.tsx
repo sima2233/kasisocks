@@ -61,11 +61,16 @@ const Navbar = ({
           <Link to="/about-us" className={`font-medium transition-colors ${isActive('/about-us') ? 'text-yellow-500' : 'hover:text-yellow-500'}`}>
             About Us
           </Link>
-          {/* Admin button, only show if user is admin */}
+          {/* Admin buttons, only show if user is admin */}
           {user?.role === 'admin' && (
-            <Link to="/admin" className={`font-medium transition-colors ${isActive('/admin') ? 'text-yellow-500' : 'hover:text-yellow-500'}`}>
-              Admin
-            </Link>
+            <>
+              <Link to="/admin" className={`font-medium transition-colors ${isActive('/admin') ? 'text-yellow-500' : 'hover:text-yellow-500'}`}>
+                Admin
+              </Link>
+              <Link to="/admin/orders" className={`font-medium transition-colors ${isActive('/admin/orders') ? 'text-yellow-500' : 'hover:text-yellow-500'}`}>
+                Orders
+              </Link>
+            </>
           )}
         </nav>
         {/* Right side icons */}
@@ -118,6 +123,17 @@ const Navbar = ({
           <Link to="/contact-us" className={`font-medium transition-colors ${isActive('/contact-us') ? 'text-yellow-500' : 'hover:text-yellow-500'}`} onClick={() => setIsMenuOpen(false)}>
             Contact Us
           </Link>
+          {/* Admin buttons, only show if user is admin */}
+          {user?.role === 'admin' && (
+            <>
+              <Link to="/admin" className={`font-medium transition-colors ${isActive('/admin') ? 'text-yellow-500' : 'hover:text-yellow-500'}`} onClick={() => setIsMenuOpen(false)}>
+                Admin
+              </Link>
+              <Link to="/admin/orders" className={`font-medium transition-colors ${isActive('/admin/orders') ? 'text-yellow-500' : 'hover:text-yellow-500'}`} onClick={() => setIsMenuOpen(false)}>
+                Orders
+              </Link>
+            </>
+          )}
           {user ? (
             <button
               onClick={() => { setIsMenuOpen(false); handleLogout(); }}

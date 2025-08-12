@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import CheckoutPage from './pages/CheckoutPage';
+import InvoicePage from './pages/InvoicePage';
 import Navbar from './components/Navbar';
+import AdminOrdersPage from './pages/AdminOrdersPage';
 import HomePage from './pages/HomePage';
 import CataloguePage from './pages/CataloguePage';
 import AboutUsPage from './pages/AboutUsPage';
@@ -89,24 +92,30 @@ export function App() {
   const isInWishlist = (productId: number) => {
     return wishlist.includes(productId);
   };
-  return <BrowserRouter>
-    <div className="flex flex-col min-h-screen bg-white">
-      <Navbar cartItemsCount={cartItems.reduce((total, item) => total + item.quantity, 0)} setIsCartOpen={setIsCartOpen} />
-      <main className="flex-grow">
-        <Routes>
-          <Route path="/auth" element={<AuthForm />} />
-          <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>} />
-          <Route path="/" element={<HomePage setSelectedProduct={setSelectedProduct} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
-          <Route path="/catalogue" element={<CataloguePage setSelectedProduct={setSelectedProduct} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
-          <Route path="/my-list" element={<MyListPage setSelectedProduct={setSelectedProduct} wishlist={wishlist} toggleWishlist={toggleWishlist} addToCart={addToCart} />} />
-          <Route path="/about-us" element={<AboutUsPage />} />
-          <Route path="/contact-us" element={<ContactUsPage />} />
-        </Routes>
-      </main>
-      <Footer />
-      {selectedProduct && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} addToCart={addToCart} />}
-      <Cart isOpen={isCartOpen} setIsOpen={setIsCartOpen} cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateCartItemQuantity} />
-      <Toast message={toastMsg} show={showToast} onClose={() => setShowToast(false)} />
-    </div>
-  </BrowserRouter>;
+  const clearCart = () => setCartItems([]);
+  return (
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen bg-white">
+        <Navbar cartItemsCount={cartItems.reduce((total, item) => total + item.quantity, 0)} setIsCartOpen={setIsCartOpen} />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/auth" element={<AuthForm />} />
+            <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>} />
+            <Route path="/admin/orders" element={<RequireAdmin><AdminOrdersPage /></RequireAdmin>} />
+            <Route path="/" element={<HomePage setSelectedProduct={setSelectedProduct} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+            <Route path="/catalogue" element={<CataloguePage setSelectedProduct={setSelectedProduct} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+            <Route path="/my-list" element={<MyListPage setSelectedProduct={setSelectedProduct} wishlist={wishlist} toggleWishlist={toggleWishlist} addToCart={addToCart} />} />
+            <Route path="/about-us" element={<AboutUsPage />} />
+            <Route path="/contact-us" element={<ContactUsPage />} />
+            <Route path="/checkout" element={<CheckoutPage cartItems={cartItems} clearCart={clearCart} />} />
+            <Route path="/invoice/:orderId" element={<InvoicePage />} />
+          </Routes>
+        </main>
+        <Footer />
+        {selectedProduct && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} addToCart={addToCart} />}
+        <Cart isOpen={isCartOpen} setIsOpen={setIsCartOpen} cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateCartItemQuantity} />
+        <Toast message={toastMsg} show={showToast} onClose={() => setShowToast(false)} />
+      </div>
+    </BrowserRouter>
+  );
 }
