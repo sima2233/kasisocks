@@ -33,7 +33,7 @@ const InvoicePage: React.FC = () => {
     return (
         <div className="max-w-2xl mx-auto py-12">
             <h2 className="text-3xl font-bold mb-6 text-center">Invoice</h2>
-            <div className="bg-white shadow rounded p-6">
+            <div className="bg-white shadow rounded p-6 border border-black/10">
                 <div className="mb-4">
                     <span className="font-semibold">Order ID:</span> {order.id}
                 </div>
