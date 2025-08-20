@@ -4,7 +4,7 @@ import { Product } from '../types';
 interface ProductModalProps {
   product: Product;
   onClose: () => void;
-  addToCart: (product: Product, quantity: number) => void;
+  addToCart: (product: Product, quantity: number, targetElement?: HTMLElement | null) => void;
 }
 const ProductModal = ({
   product,
@@ -20,8 +20,8 @@ const ProductModal = ({
   const prevImage = () => {
     setCurrentImageIndex(prev => (prev - 1 + product.images.length) % product.images.length);
   };
-  const handleAddToCart = () => {
-    addToCart(product, quantity);
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    addToCart(product, quantity, e.currentTarget);
     onClose();
   };
   return <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">

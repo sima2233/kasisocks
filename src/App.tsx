@@ -13,8 +13,9 @@ import Footer from './components/Footer';
 import ProductModal from './components/ProductModal';
 import Cart from './components/Cart';
 import AuthForm from './components/AuthForm';
-import Toast from './components/Toast';
+import Popup from './components/Popup';
 import { useCurrentUser } from './hooks/useCurrentUser';
+import { usePopup } from './hooks/usePopup';
 import { Product } from './types';
 import AdminPage from './pages/AdminPage';
 import { RequireAdmin } from './components/RequireAdmin';
@@ -26,8 +27,8 @@ export function App() {
   }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [wishlist, setWishlist] = useState<number[]>([]);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
+  const { popupState, showPopup, hidePopup } = usePopup();
+  const cartButtonRef = React.useRef<HTMLButtonElement>(null);
   const user = useCurrentUser();
   // Load wishlist from localStorage on initial render
   useEffect(() => {
@@ -40,13 +41,15 @@ export function App() {
   useEffect(() => {
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
-  const showLoginToast = () => {
-    setToastMsg('Please log in to use this feature.');
-    setShowToast(true);
+  const showLoginPopup = (targetElement: HTMLElement | null = null) => {
+    // If no specific target element, use the cart button as default
+    const popupTarget = targetElement || cartButtonRef.current;
+    showPopup('Please log in to use this feature.', popupTarget, 'info');
   };
-  const addToCart = (product: Product, quantity: number = 1) => {
+  const addToCart = (product: Product, quantity: number = 1, targetElement: HTMLElement | null = null) => {
     if (!user) {
-      showLoginToast();
+      // For login popup, always show next to cart icon (don't pass targetElement)
+      showLoginPopup();
       return;
     }
     setCartItems(prevItems => {
@@ -76,9 +79,10 @@ export function App() {
       quantity: Math.max(1, quantity)
     } : item));
   };
-  const toggleWishlist = (productId: number) => {
+  const toggleWishlist = (productId: number, targetElement: HTMLElement | null = null) => {
     if (!user) {
-      showLoginToast();
+      // For wishlist popup, show next to the heart that was clicked
+      showLoginPopup(targetElement);
       return;
     }
     setWishlist(prevWishlist => {
@@ -96,7 +100,11 @@ export function App() {
   return (
     <BrowserRouter>
       <div className="flex flex-col min-h-screen bg-white">
-        <Navbar cartItemsCount={cartItems.reduce((total, item) => total + item.quantity, 0)} setIsCartOpen={setIsCartOpen} />
+        <Navbar
+          cartItemsCount={cartItems.reduce((total, item) => total + item.quantity, 0)}
+          setIsCartOpen={setIsCartOpen}
+          cartButtonRef={cartButtonRef}
+        />
         <main className="flex-grow">
           <Routes>
             <Route path="/auth" element={<AuthForm />} />
@@ -114,7 +122,13 @@ export function App() {
         <Footer />
         {selectedProduct && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} addToCart={addToCart} />}
         <Cart isOpen={isCartOpen} setIsOpen={setIsCartOpen} cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateCartItemQuantity} />
-        <Toast message={toastMsg} show={showToast} onClose={() => setShowToast(false)} />
+        <Popup
+          message={popupState.message}
+          show={popupState.show}
+          onClose={hidePopup}
+          targetElement={popupState.targetElement}
+          type={popupState.type}
+        />
       </div>
     </BrowserRouter>
   );

@@ -4,7 +4,7 @@ import { Product } from '../types';
 import { FilterIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 interface CataloguePageProps {
   setSelectedProduct: (product: Product) => void;
-  toggleWishlist?: (productId: number) => void;
+  toggleWishlist?: (productId: number, targetElement?: HTMLElement | null) => void;
   isInWishlist?: (productId: number) => boolean;
 }
 const CataloguePage = ({

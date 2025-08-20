@@ -6,8 +6,8 @@ import { Product } from '../types';
 import { InstagramIcon, FacebookIcon } from 'lucide-react';
 interface HomePageProps {
   setSelectedProduct: (product: Product) => void;
-  addToCart?: (product: Product, quantity: number) => void;
-  toggleWishlist?: (productId: number) => void;
+  addToCart?: (product: Product, quantity: number, targetElement?: HTMLElement | null) => void;
+  toggleWishlist?: (productId: number, targetElement?: HTMLElement | null) => void;
   isInWishlist?: (productId: number) => boolean;
 }
 const HomePage = ({

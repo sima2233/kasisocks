@@ -5,7 +5,7 @@ interface ProductCardProps {
   product: Product;
   onClick: (product: Product) => void;
   isInWishlist?: boolean;
-  toggleWishlist?: (productId: number) => void;
+  toggleWishlist?: (productId: number, targetElement?: HTMLElement | null) => void;
 }
 const ProductCard = ({
   product,
@@ -13,10 +13,10 @@ const ProductCard = ({
   isInWishlist = false,
   toggleWishlist
 }: ProductCardProps) => {
-  const handleWishlistClick = (e: React.MouseEvent) => {
+  const handleWishlistClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (toggleWishlist) {
-      toggleWishlist(product.id);
+      toggleWishlist(product.id, e.currentTarget);
     }
   };
   return <div className="bg-white rounded-md overflow-hidden border border-gray-200 transition-all duration-300 hover:shadow-lg cursor-pointer relative" onClick={() => onClick(product)}>

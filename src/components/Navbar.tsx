@@ -6,10 +6,12 @@ import { ShoppingCartIcon, MenuIcon, XIcon } from 'lucide-react';
 interface NavbarProps {
   cartItemsCount: number;
   setIsCartOpen: (isOpen: boolean) => void;
+  cartButtonRef?: React.RefObject<HTMLButtonElement>;
 }
 const Navbar = ({
   cartItemsCount,
-  setIsCartOpen
+  setIsCartOpen,
+  cartButtonRef
 }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -75,7 +77,11 @@ const Navbar = ({
         </nav>
         {/* Right side icons */}
         <div className="flex items-center space-x-4">
-          <button onClick={() => setIsCartOpen(true)} className="hover:text-yellow-500 relative">
+          <button
+            ref={cartButtonRef}
+            onClick={() => setIsCartOpen(true)}
+            className="hover:text-yellow-500 relative"
+          >
             <ShoppingCartIcon size={20} />
             {cartItemsCount > 0 && <span className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
               {cartItemsCount}

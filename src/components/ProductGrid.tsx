@@ -4,7 +4,7 @@ import { Product } from '../types';
 interface ProductGridProps {
   products: Product[];
   onProductClick: (product: Product) => void;
-  toggleWishlist?: (productId: number) => void;
+  toggleWishlist?: (productId: number, targetElement?: HTMLElement | null) => void;
   isInWishlist?: (productId: number) => boolean;
 }
 const ProductGrid = ({
